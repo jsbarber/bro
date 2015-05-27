@@ -21,7 +21,8 @@ enum Type {
 	FILE_ANALYZER,	/// A file analyzer.
 	IOSOURCE,	/// An I/O source, excluding packet sources.
 	PKTSRC,	/// A packet source.
-	PKTDUMPER	/// A packet dumper.
+	PKTDUMPER,	/// A packet dumper.
+	PKTPOST,	/// Packet post-processor
 	};
 }
 

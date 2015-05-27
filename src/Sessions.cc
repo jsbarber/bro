@@ -17,6 +17,8 @@
 #include "OSFinger.h"
 #include "L2.h"
 
+#include "pktpost/Manager.h"
+#include "pktpost/PktPost.h"
 #include "analyzer/protocol/icmp/ICMP.h"
 #include "analyzer/protocol/udp/UDP.h"
 
@@ -166,13 +168,13 @@ void NetSessions::Done()
 	{
 	}
 
-void NetSessions::DispatchPacket(double t, const Packet* pkt,
+void NetSessions::DispatchPacket(double t, Packet* pkt,
 			iosource::PktSrc* src_ps)
 	{
 	NextPacket(t, pkt);
 	}
 
-void NetSessions::NextPacket(double t, const Packet* pkt)
+void NetSessions::NextPacket(double t, Packet* pkt)
 	{
 	ProcNextPacket(t, pkt);
 	if ( raw_packet )
@@ -182,9 +184,13 @@ void NetSessions::NextPacket(double t, const Packet* pkt)
 		vl->append(l2_hdr.BuildPktHdrVal());
 		mgr.QueueEvent(raw_packet, vl);
 		}
+
+	const pktpost::Manager::PktPostList &pkt_posts = pktpost_mgr->GetPktPosts();
+	for (pktpost::Manager::PktPostList::const_iterator i = pkt_posts.begin();i != pkt_posts.end(); ++i)
+		(*i)->Process(pkt);
 	}
 
-void NetSessions::ProcNextPacket(double t, const Packet *pkt)
+void NetSessions::ProcNextPacket(double t, Packet *pkt)
 	{
 	SegmentProfiler(segment_logger, "processing-packet");
 	if ( pkt_profiler )
@@ -325,7 +331,7 @@ static unsigned int gre_header_len(uint16 flags)
 	return len;
 	}
 
-void NetSessions::DoNextPacket(double t, const Packet* pkt, const IP_Hdr* ip_hdr,
+void NetSessions::DoNextPacket(double t, Packet* pkt, const IP_Hdr* ip_hdr,
 			       const EncapsulationStack* encapsulation)
 	{
 	uint32 caplen = pkt->cap_len - pkt->hdr_size;
@@ -722,6 +728,9 @@ void NetSessions::DoNextPacket(double t, const Packet* pkt, const IP_Hdr* ip_hdr
 		return;
 		}
 
+	// Remember the connection identified for this packet
+	pkt->conn = conn;
+
 	int record_packet = 1;	// whether to record the packet at all
 	int record_content = 1;	// whether to record its data
 
@@ -764,7 +773,7 @@ void NetSessions::DoNextPacket(double t, const Packet* pkt, const IP_Hdr* ip_hdr
 		}
 	}
 
-void NetSessions::DoNextInnerPacket(double t, const Packet* pkt,
+void NetSessions::DoNextInnerPacket(double t, Packet* pkt,
 		const IP_Hdr* inner, const EncapsulationStack* prev,
 		const EncapsulatingConn& ec)
 	{
@@ -987,7 +996,10 @@ Connection* NetSessions::FindConnection(Val* v)
 
 	HashKey* h = BuildConnIDHashKey(id);
 	if ( ! h )
+		{
 		reporter->InternalError("hash computation failed");
+		return 0;
+		}
 
 	Dictionary* d;
 

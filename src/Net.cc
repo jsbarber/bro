@@ -235,7 +235,7 @@ void expire_timers(iosource::PktSrc* src_ps)
 				max_timer_expires - current_dispatched);
 	}
 
-void net_packet_dispatch(double t, const Packet* pkt, iosource::PktSrc* src_ps)
+void net_packet_dispatch(double t, Packet* pkt, iosource::PktSrc* src_ps)
 	{
 	if ( ! bro_start_network_time )
 		bro_start_network_time = t;

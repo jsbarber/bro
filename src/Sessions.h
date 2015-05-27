@@ -14,6 +14,7 @@
 #include "analyzer/protocol/tcp/Stats.h"
 
 #include <utility>
+#include <vector>
 
 class EncapsulationStack;
 class Connection;
@@ -26,6 +27,8 @@ declare(PDict,FragReassembler);
 
 class Discarder;
 class PacketFilter;
+
+typedef void (*PacketProcessor)(Packet *);
 
 namespace analyzer { namespace stepping_stone { class SteppingStoneManager; } }
 namespace analyzer { namespace arp { class ARP_Analyzer; } }
@@ -69,7 +72,7 @@ public:
 	// Main entry point for packet processing. Dispatches the packet
 	// either through NextPacket(), optionally employing the packet
 	// sorter first.
-	void DispatchPacket(double t, const Packet* pkt,
+	void DispatchPacket(double t, Packet* pkt,
 			iosource::PktSrc* src_ps);
 
 	void Done();	// call to drain events before destructing
@@ -130,7 +133,7 @@ public:
 			icmp_conns.Length();
 		}
 
-	void DoNextPacket(double t, const Packet *pkt, const IP_Hdr* ip_hdr,
+	void DoNextPacket(double t, Packet *pkt, const IP_Hdr* ip_hdr,
 			const EncapsulationStack* encapsulation);
 
 	/**
@@ -147,7 +150,7 @@ public:
 	 *        the most-recently found depth of encapsulation.
 	 * @param ec The most-recently found depth of encapsulation.
 	 */
-	void DoNextInnerPacket(double t, const Packet *pkt,
+	void DoNextInnerPacket(double t, Packet *pkt,
 	                      const IP_Hdr* inner, const EncapsulationStack* prev,
 	                      const EncapsulatingConn& ec);
 
@@ -214,9 +217,9 @@ protected:
 				TransportProto transport_proto,
 				uint8 tcp_flags, bool& flip_roles);
 
-	void NextPacket(double t, const Packet* pkt);
+	void NextPacket(double t, Packet* pkt);
 
-	void ProcNextPacket(double t, const Packet *pkt);
+	void ProcNextPacket(double t, Packet *pkt);
 
 	// Record the given packet (if a dumper is active).  If len=0
 	// then the whole packet is recorded, otherwise just the first

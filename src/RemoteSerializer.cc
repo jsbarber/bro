@@ -1453,7 +1453,7 @@ void RemoteSerializer::Process()
 	if ( packets.length() )
 		{
 		BufferedPacket* bp = packets[0];
-		const Packet* p = bp->p;
+		Packet* p = bp->p;
 
 		// FIXME: The following chunk of code is copied from
 		// net_packet_dispatch().  We should change that function

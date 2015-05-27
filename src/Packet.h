@@ -12,6 +12,8 @@
 // completely seperate and self-contained entities, and we don't need any of
 // the sophisticated features like object caching.
 
+class Connection;
+
 class Packet {
 public:
 	Packet()
@@ -57,6 +59,7 @@ public:
 		time = ts.tv_sec + double(ts.tv_usec) / 1e6;
 		eth_type = 0;
 		vlan = 0;
+		conn = NULL;
 		}
 
 	const IP_Hdr IP() const
@@ -79,6 +82,7 @@ public:
 	uint32 l3_proto;		// Layer 3 protocol identified (if any)
 	uint32 eth_type;		// If L2==ethernet, innermost ethertype field
 	uint32 vlan;			// (Outermost) VLan tag if any, else 0
+	Connection *conn;		// Connection identified (if any)
 
 private:
 	// should we delete associated packet memory upon destruction.

@@ -160,6 +160,7 @@ add_subdirectory(input)
 add_subdirectory(iosource)
 add_subdirectory(logging)
 add_subdirectory(probabilistic)
+add_subdirectory(pktpost)
 
 if ( ENABLE_BROKER )
     add_subdirectory(broker)

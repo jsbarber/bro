@@ -62,6 +62,10 @@ void Component::Describe(ODesc* d) const
 		d->Add("Packet Dumper");
 		break;
 
+	case component::PKTPOST:
+		d->Add("Packet Post-processor");
+		break;
+
 	default:
 		reporter->InternalWarning("unknown component type in plugin::Component::Describe");
 		d->Add("<unknown component type>");

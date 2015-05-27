@@ -55,6 +55,7 @@ extern "C" void OPENSSL_add_all_algorithms_conf(void);
 #include "analyzer/Manager.h"
 #include "analyzer/Tag.h"
 #include "plugin/Manager.h"
+#include "pktpost/Manager.h"
 #include "file_analysis/Manager.h"
 #include "broxygen/Manager.h"
 #include "iosource/Manager.h"
@@ -95,6 +96,7 @@ analyzer::Manager* analyzer_mgr = 0;
 file_analysis::Manager* file_mgr = 0;
 broxygen::Manager* broxygen_mgr = 0;
 iosource::Manager* iosource_mgr = 0;
+pktpost::Manager* pktpost_mgr = 0;
 #ifdef ENABLE_BROKER
 bro_broker::Manager* broker_mgr = 0;
 #endif
@@ -391,6 +393,7 @@ void terminate_bro()
 	delete plugin_mgr;
 	delete reporter;
 	delete iosource_mgr;
+	delete pktpost_mgr;
 
 	reporter = 0;
 	}
@@ -828,6 +831,7 @@ int main(int argc, char** argv)
 	// policy, but we can't parse policy without DNS resolution.
 	dns_mgr->SetDir(".state");
 
+	pktpost_mgr = new pktpost::Manager();
 	iosource_mgr = new iosource::Manager();
 	persistence_serializer = new PersistenceSerializer();
 	remote_serializer = new RemoteSerializer();
@@ -927,6 +931,8 @@ int main(int argc, char** argv)
 
 	reporter->InitOptions();
 	broxygen_mgr->GenerateDocs();
+
+	pktpost_mgr->Init();
 
 	if ( user_pcap_filter )
 		{
