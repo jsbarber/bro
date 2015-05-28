@@ -37,6 +37,14 @@ Manager::~Manager()
 		}
 
 	pkt_dumpers.clear();
+
+	for ( PktDumperList::iterator i = pkt_postprocs.begin(); i != pkt_postprocs.end(); ++i )
+		{
+		(*i)->Done();
+		delete *i;
+		}
+
+	pkt_postprocs.clear();
 	}
 
 void Manager::RemoveAll()
@@ -279,7 +287,17 @@ PktSrc* Manager::OpenPktSrc(const std::string& path, bool is_live)
 	}
 
 
+PktDumper* Manager::OpenPktPostProc(const std::string& path, bool append)
+	{
+	return OpenDumper(path, append, pkt_postprocs);
+	}
+
 PktDumper* Manager::OpenPktDumper(const string& path, bool append)
+	{
+	return OpenDumper(path, append, pkt_dumpers);
+	}
+
+PktDumper* Manager::OpenDumper(const std::string& path, bool append, PktDumperList& dumper_list)
 	{
 	std::pair<std::string, std::string> t = split_prefix(path);
 	std::string prefix = t.first;
@@ -316,7 +334,7 @@ PktDumper* Manager::OpenPktDumper(const string& path, bool append)
 	DBG_LOG(DBG_PKTIO, "Created packer dumper of type %s for %s", component->Name().c_str(), npath.c_str());
 
 	pd->Init();
-	pkt_dumpers.push_back(pd);
+	dumper_list.push_back(pd);
 
 	return pd;
 	}

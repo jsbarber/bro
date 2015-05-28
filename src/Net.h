@@ -19,7 +19,7 @@ extern void net_get_final_stats();
 extern void net_finish(int drain_events);
 extern void net_delete();	// Reclaim all memory, etc.
 extern void net_update_time(double new_network_time);
-extern void net_packet_dispatch(double t, const Packet* pkt,
+extern void net_packet_dispatch(double t, Packet* pkt,
 			iosource::PktSrc* src_ps);
 extern void expire_timers(iosource::PktSrc* src_ps = 0);
 extern void termination_signal();
