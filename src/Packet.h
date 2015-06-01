@@ -62,7 +62,7 @@ public:
 		}
 
 	const IP_Hdr IP() const
-		{ return IP_Hdr((struct ip *) (data + hdr_size), true); }
+		{ return IP_Hdr((struct ip *) (data + hdr_size), false); }
 
 	void Describe(ODesc* d) const;
 
