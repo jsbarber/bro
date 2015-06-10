@@ -183,7 +183,8 @@ void NetSessions::NextPacket(double t, Packet* pkt)
 	for ( iosource::Manager::PktDumperList::const_iterator i = pkt_postprocs.begin();
 	      i != pkt_postprocs.end(); i++ )
 		{
-		(*i)->Dump(pkt);
+		if ((*i)->IsOpen())
+			(*i)->Dump(pkt);
 		}
 
 	if ( raw_packet )

@@ -61,9 +61,7 @@ IOSource* Manager::FindSoonest(double* ts)
 	      i != sources.end(); ++i )
 		if ( ! (*i)->src->IsOpen() )
 			{
-			(*i)->src->Done();
-			delete *i;
-			sources.erase(i);
+			Remove(i);
 			break;
 			}
 
@@ -220,6 +218,25 @@ void Manager::Register(PktSrc* src)
 	{
 	pkt_srcs.push_back(src);
 	Register(src, false);
+	}
+
+void Manager::Remove(SourceList::iterator i)
+	{
+	// (Necessary if it's a PktSrc, harmless otherwise)
+	pkt_srcs.remove(static_cast<PktSrc *>((*i)->src));
+	(*i)->src->Done();
+	delete (*i)->src;
+	delete *i;
+	sources.erase(i);
+	}
+
+void Manager::Remove(IOSource *src)
+	{
+	for ( SourceList::iterator i = sources.begin(); i != sources.end(); ++i )
+		{
+		if ( (*i)->src == src )
+			Remove(i);
+		}
 	}
 
 static std::pair<std::string, std::string> split_prefix(std::string path)

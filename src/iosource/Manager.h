@@ -116,6 +116,11 @@ public:
 	 */
 	const PktDumperList& GetPktPostProcs() const	{ return pkt_postprocs; }
 
+	/**
+	 * Remove the specified source.
+	 */
+	void Remove(IOSource *src);
+
 private:
 	/**
 	 * Do heavy-lifting for OpenPktDumper and OpenPktPostProc. Additional
@@ -158,6 +163,12 @@ private:
 	};
 
 	typedef std::list<Source*> SourceList;
+
+	/**
+	 * Remove the source indicated by the iterator.
+	 */
+	void Remove(SourceList::iterator i);
+
 	SourceList sources;
 
 	PktSrcList pkt_srcs;
