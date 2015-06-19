@@ -96,7 +96,37 @@ public:
 	 */
 	PktDumper* OpenPktDumper(const std::string& path, bool append);
 
+	/**
+	 * Opens a new packet post-processor (which is simply a PktDumper that
+	 * gets called for every packet following the analysis phase).
+	 *
+	 * @param path The file name to dump into.
+	 *
+	 * @param append True to append if \a path already exists.
+	 *
+	 * @return The new packet dumper, or null if an error occured.
+	 */
+	PktDumper* OpenPktPostProc(const std::string& path, bool append);
+
+	typedef std::list<PktDumper *> PktDumperList;
+
+	/**
+	 * Returns a list of all registered PktSrc instances. This is a
+	 * subset of all registered IOSource instances.
+	 */
+	const PktDumperList& GetPktPostProcs() const	{ return pkt_postprocs; }
+
+	/**
+	 * Remove the specified source.
+	 */
+	void Remove(IOSource *src);
+
 private:
+	/**
+	 * Do heavy-lifting for OpenPktDumper and OpenPktPostProc. Additional
+	 * param specifies which list the new packet dumper goes into.
+	 */
+	PktDumper* OpenDumper(const std::string& path, bool append, PktDumperList& dumper_list);
 	/**
 	 * When looking for a source with something to process, every
 	 * SELECT_FREQUENCY calls we will go ahead and block on a select().
@@ -133,12 +163,17 @@ private:
 	};
 
 	typedef std::list<Source*> SourceList;
-	SourceList sources;
 
-	typedef std::list<PktDumper *> PktDumperList;
+	/**
+	 * Remove the source indicated by the iterator.
+	 */
+	void Remove(SourceList::iterator i);
+
+	SourceList sources;
 
 	PktSrcList pkt_srcs;
 	PktDumperList pkt_dumpers;
+	PktDumperList pkt_postprocs;
 };
 
 }

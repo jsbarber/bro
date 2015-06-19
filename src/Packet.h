@@ -4,6 +4,8 @@
 #include "Desc.h"
 #include "IP.h"
 
+class Connection;
+namespace iosource { class PktSrc; }
 // A link-layer packet.
 //
 // Note that for serialization we don't use much of the support provided by
@@ -59,6 +61,18 @@ public:
 		time = ts.tv_sec + double(ts.tv_usec) / 1e6;
 		eth_type = 0;
 		vlan = 0;
+		conn = NULL;
+		pkt_src = NULL;
+		}
+
+	void SetConn(Connection *arg_conn)
+		{
+		conn = arg_conn;
+		}
+
+	void SetPktSrc(iosource::PktSrc *arg_pkt_src)
+		{
+		pkt_src = arg_pkt_src;
 		}
 
 	const IP_Hdr IP() const
@@ -81,6 +95,8 @@ public:
 	uint32 l3_proto;		// Layer 3 protocol identified (if any)
 	uint32 eth_type;		// If L2==ethernet, innermost ethertype field
 	uint32 vlan;			// (Outermost) VLan tag if any, else 0
+	iosource::PktSrc *pkt_src;	// Where the packet came from.
+	Connection *conn;		// Connection identified (if any)
 
 private:
 	// should we delete associated packet memory upon destruction.
