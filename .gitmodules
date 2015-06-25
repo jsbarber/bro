@@ -15,13 +15,13 @@
 	url = git://git.bro.org/btest
 [submodule "cmake"]
 	path = cmake
-	url = git://git.bro.org/cmake
+	url = git@github.com:jsbarber/cmake.git
 [submodule "src/3rdparty"]
 	path = src/3rdparty
 	url = git://git.bro.org/bro-3rdparty
 [submodule "aux/plugins"]
 	path = aux/plugins
-	url = git://git.bro.org/bro-plugins
+	url = git@github.com:jsbarber/bro-plugins.git
 [submodule "aux/broker"]
 	path = aux/broker
 	url = git://git.bro.org/broker
