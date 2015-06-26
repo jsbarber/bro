@@ -235,7 +235,10 @@ void Manager::Remove(IOSource *src)
 	for ( SourceList::iterator i = sources.begin(); i != sources.end(); ++i )
 		{
 		if ( (*i)->src == src )
+			{
 			Remove(i);
+			break;
+			}
 		}
 	}
 
