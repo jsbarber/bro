@@ -96,6 +96,11 @@ public:
 	 */
 	PktDumper* OpenPktDumper(const std::string& path, bool append);
 
+	/**
+	 * Remove the specified source.
+	 */
+	void Remove(IOSource *src);
+
 private:
 	/**
 	 * When looking for a source with something to process, every
@@ -133,6 +138,12 @@ private:
 	};
 
 	typedef std::list<Source*> SourceList;
+
+	/**
+	 * Remove the source indicated by the iterator.
+	 */
+	void Remove(SourceList::iterator i);
+
 	SourceList sources;
 
 	typedef std::list<PktDumper *> PktDumperList;
