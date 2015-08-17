@@ -30,6 +30,7 @@ PktSrc::PktSrc()
 	next_sync_point = 0;
 	first_timestamp = 0.0;
 	first_wallclock = current_wallclock = 0;
+	unique_id = calculate_unique_id();
 	}
 
 PktSrc::~PktSrc()

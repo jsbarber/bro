@@ -215,6 +215,15 @@ public:
 	 */
 	virtual void Statistics(Stats* stats) = 0;
 
+	/**
+	* Return a unique ID for this packet source.
+	*/
+	uint64 GetUniqueId()
+		{
+		return unique_id;
+		}
+
+
 protected:
 	friend class Manager;
 
@@ -362,6 +371,7 @@ private:
 	virtual const char* Tag();
 
 	Properties props;
+	uint64 unique_id;
 
 	bool have_packet;
 	Packet current_packet;

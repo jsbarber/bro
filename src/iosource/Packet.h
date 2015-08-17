@@ -29,6 +29,9 @@ public:
 	/**
 	 * Construct and initialize from packet data.
 	 *
+	 * @param pkt_src_id. Unique identifier associated with PktSrc from
+	 * which this packet originated.
+	 *
 	 * @param link_type The link type in the form of a \c DLT_* constant.
 	 *
 	 * @param ts The timestamp associated with the packet.
@@ -48,11 +51,11 @@ public:
 	 * @param tag A textual tag to associate with the packet for
 	 * differentiating the input streams.
 	 */
-	Packet(int link_type, struct timeval *ts, uint32 caplen,
+	Packet(uint64_t pkt_src_id, int link_type, struct timeval *ts, uint32 caplen,
 	       uint32 len, const u_char *data, int copy = false,
 	       std::string tag = std::string("")) : data(0)
 	       {
-	       Init(link_type, ts, caplen, len, data, copy, tag);
+	       Init(pkt_src_id, link_type, ts, caplen, len, data, copy, tag);
 	       }
 
 	/**
@@ -61,7 +64,7 @@ public:
 	Packet() : data(0)
 		{
 		struct timeval ts = {0, 0};
-		Init(0, &ts, 0, 0, 0);
+		Init(0, 0, &ts, 0, 0, 0);
 		}
 
 	/**
@@ -76,6 +79,9 @@ public:
 	/**
 	 * (Re-)initialize from packet data.
 	 *
+	 * @param pkt_src_id. Unique identifier associated with PktSrc from
+	 * which this packet originated.
+	 *
 	 * @param link_type The link type in the form of a \c DLT_* constant.
 	 *
 	 * @param ts The timestamp associated with the packet.
@@ -95,7 +101,7 @@ public:
 	 * @param tag A textual tag to associate with the packet for
 	 * differentiating the input streams.
 	 */
-	void Init(int link_type, struct timeval *ts, uint32 caplen,
+	void Init(uint64_t pkt_src_id, int link_type, struct timeval *ts, uint32 caplen,
 		uint32 len, const u_char *data, int copy = false,
 		std::string tag = std::string(""));
 
@@ -147,6 +153,7 @@ public:
 	static Packet* Unserialize(UnserialInfo* info);
 
 	// These are passed in through the constructor.
+	uint64_t pkt_src_id;		/// Unique identifier of PktSrc
 	std::string tag;		/// Used in serialization
 	double time;			/// Timestamp reconstituted as float
 	struct timeval ts;		/// Capture timestamp

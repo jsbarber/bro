@@ -747,6 +747,7 @@ type pcap_packet: record {
 	len: count;	##< The length of the packet in bytes, including link-level header.
 	data: string;	##< The payload of the packet, including link-level header.
 	link_type: link_encap;	##< Layer 2 link encapsulation type.
+	pkt_src_id: count; ##< Unique ID of PktSrc
 };
 
 ## GeoIP location information.

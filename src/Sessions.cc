@@ -792,7 +792,7 @@ void NetSessions::DoNextInnerPacket(double t, const Packet* pkt,
 
 	// Construct fake packet for DoNextPacket
 	Packet p;
-	p.Init(DLT_RAW, &ts, caplen, len, data, false, "");
+	p.Init(pkt->pkt_src_id, DLT_RAW, &ts, caplen, len, data, false, "");
 	DoNextPacket(t, &p, inner, outer);
 
 	delete inner;

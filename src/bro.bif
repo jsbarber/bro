@@ -3276,6 +3276,7 @@ function get_current_packet%(%) : pcap_packet
 		pkt->Assign(3, new Val(0, TYPE_COUNT));
 		pkt->Assign(4, new StringVal(""));
 		pkt->Assign(5, new EnumVal(BifEnum::LINK_UNKNOWN, BifType::Enum::link_encap));
+		pkt->Assign(6, new Val(0, TYPE_COUNT));
 		return pkt;
 		}
 
@@ -3285,6 +3286,7 @@ function get_current_packet%(%) : pcap_packet
 	pkt->Assign(3, new Val(p->len, TYPE_COUNT));
 	pkt->Assign(4, new StringVal(p->cap_len, (const char*)p->data));
 	pkt->Assign(5, new EnumVal(p->link_type, BifType::Enum::link_encap));
+	pkt->Assign(6, new Val(p->pkt_src_id, TYPE_COUNT));
 
 	return pkt;
 	%}
@@ -3317,7 +3319,8 @@ function dump_packet%(pkt: pcap_packet, file_name: string%) : bool
 		len = (*pkt_vl)[3]->AsCount();
 		data = (*pkt_vl)[4]->AsString()->Bytes();
 		link_type = (*pkt_vl)[5]->AsEnum();
-		Packet p(link_type, &ts, caplen, len, data, true);
+		uint64 pkt_src_id = (*pkt_vl)[6]->AsCount();
+		Packet p(pkt_src_id, link_type, &ts, caplen, len, data, true);
 
 		addl_pkt_dumper->Dump(&p);
 		}

@@ -15,13 +15,14 @@ extern "C" {
 #endif
 }
 
-void Packet::Init(int arg_link_type, struct timeval *arg_ts, uint32 arg_caplen,
+void Packet::Init(uint64 arg_pkt_src_id, int arg_link_type, struct timeval *arg_ts, uint32 arg_caplen,
 		  uint32 arg_len, const u_char *arg_data, int arg_copy,
 		  std::string arg_tag)
 	{
 	if ( data && copy )
 		delete [] data;
 
+	pkt_src_id = arg_pkt_src_id;
 	link_type = arg_link_type;
 	ts = *arg_ts;
 	cap_len = arg_caplen;
@@ -419,7 +420,8 @@ void Packet::Describe(ODesc* d) const
 
 bool Packet::Serialize(SerialInfo* info) const
 	{
-	return SERIALIZE(uint32(ts.tv_sec)) &&
+	return	SERIALIZE(pkt_src_id) &&
+		SERIALIZE(uint32(ts.tv_sec)) &&
 		SERIALIZE(uint32(ts.tv_usec)) &&
 		SERIALIZE(uint32(len)) &&
 		SERIALIZE(link_type) &&
@@ -435,8 +437,10 @@ Packet* Packet::Unserialize(UnserialInfo* info)
 	{
 	struct timeval ts;
 	uint32 len, link_type;
+	uint64 pkt_src_id;
 
-	if ( ! (UNSERIALIZE((uint32 *)&ts.tv_sec) &&
+	if ( ! (UNSERIALIZE(&pkt_src_id) &&
+		UNSERIALIZE((uint32 *)&ts.tv_sec) &&
 		UNSERIALIZE((uint32 *)&ts.tv_usec) &&
 		UNSERIALIZE(&len) &&
 		UNSERIALIZE(&link_type)) )
@@ -454,7 +458,7 @@ Packet* Packet::Unserialize(UnserialInfo* info)
 		return 0;
 		}
 
-	Packet *p = new Packet(link_type, &ts, caplen, len, pkt, true,
+	Packet *p = new Packet(pkt_src_id, link_type, &ts, caplen, len, pkt, true,
 			       std::string(tag));
 	delete [] tag;
 
